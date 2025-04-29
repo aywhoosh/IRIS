@@ -178,7 +178,7 @@ erDiagram
 | ![Register Screen](screenshots/register.jpg)         | ![Login Screen](screenshots/login.jpg)               |
 
 ### Main Workflow
-| Home & Camera History                                 | Processing Animation                                        | Scan Results                                            |
+| Home & Camera Screen                                 | Processing Animation                                        | Scan Results                                            |
 |:----------------------------------------------------:|:-----------------------------------------------------------:|:--------------------------------------------------------:|
 | ![Home & Camera](screenshots/home_and_camera.jpg)   | ![Processing Screen](screenshots/processing_screen.jpg)      | ![Scan Results](screenshots/scan_result.jpg)            |
 
