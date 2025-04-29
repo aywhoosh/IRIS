@@ -7,7 +7,7 @@ class AppConstants {
   //Supabase configuration
   static const String supabaseUrl = 'https://weaqcqqbagnycxywvldd.supabase.co';
   static const String supabaseAnonKey =
-      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndlYXFjcXFiYWdueWN4eXd2bGRkIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc0MDU1NTAwNCwiZXhwIjoyMDU2MTMxMDA0fQ.1N4SGEBXf1TOoeWohHGGyYS4yn31FpjESB-p3omnB3c';
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndlYXFjcXFiYWdueWN4eXd2bGRkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDU5NTE3MzYsImV4cCI6MjA2MTUyNzczNn0.RNZVohEAx5I3UscnfkltjyGxwYXFzS8RKpcKSq3HZjA';
 
   // Auth endpoints
   static const String loginEndpoint = '$apiVersion/auth/login';
