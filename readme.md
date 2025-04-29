@@ -178,9 +178,9 @@ erDiagram
 | ![Register Screen](screenshots/register.jpg)         | ![Login Screen](screenshots/login.jpg)               |
 
 ### Main Workflow
-| Home & Scan History                                  | Camera / Eye Centering                               | Processing Animation                                        | Scan Results                                            |
-|:----------------------------------------------------:|:----------------------------------------------------:|:-----------------------------------------------------------:|:--------------------------------------------------------:|
-| ![Home & History](screenshots/home_and_camera.jpg)   | ![Camera Screen](screenshots/home_and_camera.jpg)   | ![Processing Screen](screenshots/processing_screen.jpg)      | ![Scan Results](screenshots/scan_result.jpg)            |
+| Home & Scan History                                  | Processing Animation                                        | Scan Results                                            |
+|:----------------------------------------------------:|:-----------------------------------------------------------:|:--------------------------------------------------------:|
+| ![Home & History](screenshots/home_and_camera.jpg)   | ![Processing Screen](screenshots/processing_screen.jpg)      | ![Scan Results](screenshots/scan_result.jpg)            |
 
 ### Details & Profile
 | Detailed Diagnosis View                              | Profile Screen                                       |
