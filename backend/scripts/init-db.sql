@@ -1,0 +1,47 @@
+-- Create necessary tables
+CREATE TABLE IF NOT EXISTS users (
+  id UUID PRIMARY KEY,
+  email VARCHAR(255) NOT NULL UNIQUE,
+  password_hash VARCHAR(255) NOT NULL,
+  first_name VARCHAR(100) NOT NULL,
+  last_name VARCHAR(100) NOT NULL,
+  role VARCHAR(50) NOT NULL DEFAULT 'patient',
+  is_active BOOLEAN NOT NULL DEFAULT true,
+  last_login TIMESTAMP,
+  reset_token VARCHAR(255),
+  reset_token_expires TIMESTAMP,
+  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS eye_scans (
+  id UUID PRIMARY KEY,
+  user_id UUID NOT NULL REFERENCES users(id),
+  image_path VARCHAR(255) NOT NULL,
+  image_quality INTEGER,
+  eye_side VARCHAR(10) NOT NULL,
+  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS processing_jobs (
+  id UUID PRIMARY KEY,
+  scan_id UUID NOT NULL REFERENCES eye_scans(id),
+  status VARCHAR(20) NOT NULL DEFAULT 'queued',
+  progress INTEGER NOT NULL DEFAULT 0,
+  error_message TEXT,
+  started_at TIMESTAMP,
+  completed_at TIMESTAMP,
+  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS refresh_tokens (
+  id UUID PRIMARY KEY,
+  user_id UUID NOT NULL REFERENCES users(id),
+  token VARCHAR(255) NOT NULL UNIQUE,
+  revoked BOOLEAN DEFAULT false,
+  revoked_at TIMESTAMP,
+  expires_at TIMESTAMP NOT NULL,
+  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);

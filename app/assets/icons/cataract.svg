@@ -1,0 +1,6 @@
+<svg width="80" height="80" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <path d="M40 16C25 16 12 26 6 40C12 54 25 64 40 64C55 64 68 54 74 40C68 26 55 16 40 16Z" fill="currentColor" opacity="0.3"/>
+  <circle cx="40" cy="40" r="16" fill="currentColor" opacity="0.6"/>
+  <path d="M40 32C35.5817 32 32 35.5817 32 40C32 44.4183 35.5817 48 40 48C44.4183 48 48 44.4183 48 40" fill="currentColor"/>
+  <path opacity="0.8" d="M34 34L46 46M34 46L46 34" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+</svg>

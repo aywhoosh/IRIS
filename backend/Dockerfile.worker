@@ -1,0 +1,36 @@
+# Base Node.js image for worker
+FROM node:20-alpine AS base
+
+# Create app directory
+WORKDIR /app
+
+# Install dependencies
+COPY package*.json ./
+RUN npm ci --only=production
+
+# Copy application code
+COPY . .
+
+# Set environment variables
+ENV NODE_ENV=production
+
+# Install additional dependencies for image processing
+RUN apk add --no-cache \
+    python3 \
+    build-base \
+    g++ \
+    cairo-dev \
+    jpeg-dev \
+    pango-dev \
+    giflib-dev
+
+# Create non-root user for security
+RUN addgroup -g 1001 -S nodejs && \
+    adduser -S nodejs -u 1001 && \
+    chown -R nodejs:nodejs /app
+
+# Switch to non-root user
+USER nodejs
+
+# Start worker process
+CMD ["node", "src/worker.js"]

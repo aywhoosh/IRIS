@@ -1,0 +1,82 @@
+project structure:-
+
+📦 IRIS
+└── 📂 app
+    ├── 📂 android                  # Android platform code
+    │   ├── 📂 app                  # Android app-specific files
+    │   │   ├── 📂 src              # Android source code
+    │   │   │   ├── 📂 main         # Main Android code
+    │   │   │   │   ├── 📂 kotlin   # Kotlin source files
+    │   │   │   │   ├── 📂 res      # Android resources
+    │   │   │   │   └── AndroidManifest.xml
+    │   │   ├── build.gradle        # Android app build config
+    │   │   └── .cxx                # Native code build files
+    │   ├── gradle.properties       # Gradle properties
+    │   └── build.gradle            # Android project build config
+    │
+    ├── 📂 ios                      # iOS platform code
+    │   ├── 📂 Runner               # iOS app code
+    │   │   ├── Info.plist          # iOS app configuration
+    │   │   └── AppDelegate.swift   # iOS app delegate
+    │   ├── Podfile                 # iOS dependencies
+    │   └── Runner.xcodeproj        # XCode project file
+    │
+    ├── 📂 web                      # Web platform files
+    │   ├── index.html              # Web entry point
+    │   ├── manifest.json           # Web app manifest
+    │   └── 📂 icons                # Web app icons
+    │
+    ├── 📂 macos                    # macOS desktop platform
+    │   └── Runner.xcodeproj        # macOS XCode project
+    │
+    ├── 📂 lib                      # Flutter source code
+    │   ├── main.dart               # Main entry point
+    │   │
+    │   ├── 📂 screens              # App screens
+    │   │   ├── home_screen.dart    # Home/landing page
+    │   │   ├── camera_screen.dart  # Camera capture screen
+    │   │   ├── gallery_upload_screen.dart # Gallery import screen
+    │   │   ├── processing_screen.dart # AI processing screen
+    │   │   └── results_screen.dart # Diagnosis results screen
+    │   │
+    │   ├── 📂 widgets              # Reusable UI components
+    │   │   ├── pulsating_orb.dart  # Animated processing indicator
+    │   │   ├── animated_background.dart # Dynamic animations
+    │   │   ├── aurora_background.dart # Shader background effect
+    │   │   └── custom_buttons.dart # Animated button components
+    │   │
+    │   ├── 📂 theme                # Theming and styling
+    │   │   ├── colors.dart         # App color definitions
+    │   │   ├── typography.dart     # Text styles with Inter font
+    │   │   └── theme.dart          # Material 3 theme configuration
+    │   │
+    │   ├── 📂 models               # Data models
+    │   │   ├── scan_result.dart    # Diagnostic results model
+    │   │   └── user.dart           # User data model
+    │   │
+    │   ├── 📂 services             # Business logic services
+    │   │   ├── image_processing.dart # Image analysis service
+    │   │   └── api_service.dart    # API communication service
+    │   │
+    │   └── 📂 utils                # Utility functions
+    │       ├── platform_utils.dart # Platform-specific code
+    │       └── constants.dart      # App constants
+    │
+    ├── 📂 assets                   # App resources
+    │   ├── 📂 images               # Image assets
+    │   ├── 📂 animations           # Lottie animations
+    │   ├── 📂 shaders              # GLSL shader files for effects
+    │   └── 📂 fonts                # Custom font files
+    │
+    ├── 📂 screenshots              # App screenshots for documentation
+    │
+    ├── 📂 test                     # Test files
+    │   ├── widget_test.dart        # Widget tests
+    │   └── unit_test.dart          # Unit tests
+    │
+    ├── pubspec.yaml                # Flutter dependencies and config
+    ├── README.md                   # Project documentation
+    ├── project_documentation.txt   # Additional documentation
+    ├── ui_improvements_tracking.txt # UI/UX improvement tracking
+    ├── analysis_options.yaml       # Dart analysis settings
+    └── .gitignore                  # Git ignore file

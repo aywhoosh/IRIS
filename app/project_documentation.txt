@@ -1,0 +1,127 @@
+IRIS Flutter Application Documentation
+====================================
+
+Project Overview
+---------------
+IRIS is a Flutter application that appears to be focused on eye/iris scanning or processing functionality. The project is structured as a modern Flutter application with cross-platform support (Android, iOS, Web, Desktop).
+
+Project Structure
+---------------
+The application follows a well-organized structure:
+1. lib/
+   - main.dart: Entry point of the application
+   - screens/: Contains all screen-level widgets
+     * camera_screen.dart: Handles camera functionality
+     * gallery_upload_screen.dart: Manages image uploads from gallery
+     * home_screen.dart: Main landing screen
+     * processing_screen.dart: Handles image processing
+     * results_screen.dart: Displays processing results
+   - theme/: Contains theme-related files
+     * colors.dart: Color definitions
+   - widgets/: Reusable widget components
+     * animated_background.dart: Background animation component
+     * aurora_background.dart: Aurora effect background
+     * pulsating_orb.dart: Animated orb component
+
+Core Features
+------------
+1. Platform Support
+   - Web support enabled
+   - Android support (SDK 21 and above)
+   - iOS support
+   - Desktop support (macOS, Windows, Linux)
+
+2. UI/UX Elements
+   - Material Design 3 implementation
+   - Custom animations and transitions
+   - Shader-based effects (Aurora background)
+   - Light theme with blue seed color
+   - Google Inter font integration
+
+Technical Implementation Details
+------------------------------
+1. Main Application (main.dart)
+   - Uses WidgetsFlutterBinding for initialization
+   - Implements MaterialApp with Material 3 design
+   - Conditional animation support based on platform
+   - Shader support verification for different platforms
+
+2. Animation and Graphics
+   - Custom shader implementation (aurora.glsl)
+   - SVG asset integration (eye.svg)
+   - JSON-based animations (scan_transition.json)
+   - Conditional animation rendering based on platform capabilities
+
+3. Dependencies
+   - google_fonts: For typography
+   - camera: For camera functionality
+   - image_picker: For gallery image selection
+   - permission_handler: For managing system permissions
+
+Platform-Specific Features
+-------------------------
+1. Android
+   - Minimum SDK version check for shader support
+   - Camera and storage permission handling
+   - Gradle configuration for native features
+
+2. iOS
+   - Full shader support
+   - Camera permission handling
+   - Info.plist configurations for required features
+
+3. Web
+   - Full animation and shader support enabled
+   - Browser-compatible implementations
+
+4. Desktop (Windows, macOS, Linux)
+   - Native window management
+   - File system access handling
+   - Platform-specific optimizations
+
+Performance Considerations
+------------------------
+1. Conditional Animation Loading
+   - Animations are disabled during testing
+   - Platform-specific checks for shader support
+   - Optimized resource usage based on platform capabilities
+
+2. Asset Management
+   - Organized asset structure
+   - Shader files in dedicated directory
+   - SVG usage for scalable graphics
+
+Development Guidelines
+--------------------
+1. Code Organization
+   - Separate screens for different functionalities
+   - Reusable widgets in dedicated directory
+   - Theme-related code isolation
+   - Platform-specific code separation
+
+2. Testing
+   - Widget testing support
+   - Platform-specific test configurations
+   - Animation disable flag for testing
+
+Build and Deployment
+-------------------
+1. Android
+   - Gradle-based build system
+   - Native plugin configuration
+   - Asset bundling
+
+2. iOS
+   - XCode project configuration
+   - CocoaPods integration
+   - Asset cataloging
+
+3. Web
+   - Index.html configuration
+   - Web-specific optimizations
+   - PWA support with manifest.json
+
+4. Desktop
+   - CMake-based build system
+   - Platform-specific window configuration
+   - Native code integration

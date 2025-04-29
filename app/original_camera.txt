@@ -1,0 +1,682 @@
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:camera/camera.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:permission_handler/permission_handler.dart';
+import 'enhanced_processing_screen.dart';
+import '../navigation/app_router.dart';
+
+class EnhancedCameraScreen extends StatefulWidget {
+  const EnhancedCameraScreen({super.key});
+
+  @override
+  State<EnhancedCameraScreen> createState() => _EnhancedCameraScreenState();
+}
+
+class _EnhancedCameraScreenState extends State<EnhancedCameraScreen>
+    with WidgetsBindingObserver {
+  CameraController? _controller;
+  List<CameraDescription>? _cameras;
+  bool _isInitialized = false;
+  bool _isCapturing = false;
+  String? _errorMessage;
+  String _selectedEyeSide = 'left'; // Default to left eye
+  double _zoomLevel = 1.0;
+  double _maxZoom = 1.0;
+  double _minZoom = 1.0;
+  bool _isTorchOn = false;
+  bool _showGuides = true;
+  Size? _previewSize;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+    _initializeCamera();
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    _controller?.dispose();
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    final CameraController? controller = _controller;
+
+    // App state changed before camera was initialized
+    if (controller == null || !controller.value.isInitialized) {
+      return;
+    }
+
+    if (state == AppLifecycleState.inactive) {
+      controller.dispose();
+    } else if (state == AppLifecycleState.resumed) {
+      _initializeCamera();
+    }
+  }
+
+  Future<void> _requestCameraPermission() async {
+    final status = await Permission.camera.request();
+    if (status != PermissionStatus.granted) {
+      setState(() {
+        _errorMessage = 'Camera permission is required to use this feature';
+      });
+    }
+  }
+
+  Future<void> _initializeCamera() async {
+    try {
+      await _requestCameraPermission();
+
+      _cameras = await availableCameras();
+
+      if (_cameras!.isEmpty) {
+        setState(() {
+          _errorMessage = 'No cameras found';
+          _isInitialized = false;
+        });
+        return;
+      }
+
+      // Use the first back camera
+      final backCamera = _cameras!.firstWhere(
+        (camera) => camera.lensDirection == CameraLensDirection.back,
+        orElse: () => _cameras!.first,
+      );
+
+      _controller = CameraController(
+        backCamera,
+        ResolutionPreset.high,
+        enableAudio: false,
+        imageFormatGroup: ImageFormatGroup.jpeg,
+      );
+
+      await _controller!.initialize();
+
+      // Initialize zoom levels
+      _maxZoom = await _controller!.getMaxZoomLevel();
+      _minZoom = await _controller!.getMinZoomLevel();
+
+      setState(() {
+        _isInitialized = true;
+        _errorMessage = null;
+        _previewSize = _controller!.value.previewSize;
+      });
+    } catch (e) {
+      setState(() {
+        _errorMessage = 'Error initializing camera: $e';
+        _isInitialized = false;
+      });
+    }
+  }
+
+  void _toggleTorch() async {
+    if (_controller != null && _controller!.value.isInitialized) {
+      try {
+        final newValue = !_isTorchOn;
+        await _controller!
+            .setFlashMode(newValue ? FlashMode.torch : FlashMode.off);
+
+        // Provide haptic feedback
+        HapticFeedback.mediumImpact();
+
+        setState(() {
+          _isTorchOn = newValue;
+        });
+      } catch (e) {
+        // Torch might not be available on all devices
+        ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Torch is not available on this device')));
+      }
+    }
+  }
+
+  void _toggleEyeSide() {
+    HapticFeedback.selectionClick();
+    setState(() {
+      _selectedEyeSide = _selectedEyeSide == 'left' ? 'right' : 'left';
+    });
+  }
+
+  void _toggleGuidelines() {
+    HapticFeedback.selectionClick();
+    setState(() {
+      _showGuides = !_showGuides;
+    });
+  }
+
+  Future<void> _captureImage() async {
+    if (_controller == null || !_controller!.value.isInitialized) {
+      return;
+    }
+
+    if (_isCapturing) {
+      return;
+    }
+
+    try {
+      setState(() {
+        _isCapturing = true;
+      });
+
+      // Dispose of existing images in memory
+      await Future.delayed(const Duration(milliseconds: 50));
+
+      // Take picture with error handling
+      final XFile? image = await _controller!.takePicture().catchError((error) {
+        print('Error taking picture: $error');
+        setState(() {
+          _isCapturing = false;
+          _errorMessage = 'Failed to capture image: $error';
+        });
+        return null;
+      });
+
+      // Check if image capture was successful
+      if (image == null) {
+        setState(() {
+          _isCapturing = false;
+        });
+        return;
+      }
+
+      setState(() {
+        _isCapturing = false;
+      });
+
+      if (!mounted) return;
+
+      // Delay navigation slightly to ensure UI has time to update
+      await Future.delayed(const Duration(milliseconds: 100));
+
+      if (!mounted) return;
+
+      // Provide haptic feedback for successful capture
+      HapticFeedback.heavyImpact();
+
+      // Use explicit file path and wrapped in try-catch
+      try {
+        final String imagePath = image.path;
+
+        // Direct navigation which is more reliable than router
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => EnhancedProcessingScreen(
+              imagePath: imagePath,
+              eyeSide: _selectedEyeSide,
+            ),
+          ),
+        );
+      } catch (navigationError) {
+        print('Navigation error: $navigationError');
+        setState(() {
+          _errorMessage = 'Error processing image: $navigationError';
+        });
+      }
+    } catch (e) {
+      print('General error in capture process: $e');
+      setState(() {
+        _isCapturing = false;
+        _errorMessage = 'Error capturing image: $e';
+      });
+    }
+  }
+
+  Future<void> _pickImageFromGallery() async {
+    final ImagePicker picker = ImagePicker();
+    try {
+      final XFile? pickedFile = await picker.pickImage(
+        source: ImageSource.gallery,
+        maxWidth: 1920,
+        maxHeight: 1920,
+        imageQuality: 80,
+      );
+
+      if (pickedFile != null && mounted) {
+        // Direct navigation which is more reliable than router
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => EnhancedProcessingScreen(
+              imagePath: pickedFile.path,
+              eyeSide: _selectedEyeSide,
+            ),
+          ),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() {
+          _errorMessage = 'Error picking image: $e';
+        });
+      }
+    }
+  }
+
+  Widget _buildZoomControl() {
+    return Positioned(
+      right: 16,
+      top: MediaQuery.of(context).size.height * 0.2,
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.black.withOpacity(0.5),
+          borderRadius: BorderRadius.circular(30),
+        ),
+        padding: const EdgeInsets.symmetric(vertical: 8),
+        child: Column(
+          children: [
+            IconButton(
+              icon: const Icon(Icons.add, color: Colors.white),
+              onPressed: () async {
+                if (_controller != null) {
+                  double newZoom = (_zoomLevel + 0.1).clamp(_minZoom, _maxZoom);
+                  await _controller!.setZoomLevel(newZoom);
+                  setState(() {
+                    _zoomLevel = newZoom;
+                  });
+                }
+              },
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 8),
+              child: Text(
+                '${_zoomLevel.toStringAsFixed(1)}x',
+                style: const TextStyle(color: Colors.white),
+              ),
+            ),
+            IconButton(
+              icon: const Icon(Icons.remove, color: Colors.white),
+              onPressed: () async {
+                if (_controller != null) {
+                  double newZoom = (_zoomLevel - 0.1).clamp(_minZoom, _maxZoom);
+                  await _controller!.setZoomLevel(newZoom);
+                  setState(() {
+                    _zoomLevel = newZoom;
+                  });
+                }
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildCameraOverlay() {
+    if (!_showGuides || _previewSize == null) return Container();
+
+    final width = MediaQuery.of(context).size.width;
+    final height = width * _previewSize!.height / _previewSize!.width;
+
+    return Positioned.fill(
+      child: Stack(
+        children: [
+          // Circle guide for eye positioning
+          Center(
+            child: Container(
+              width: width * 0.6,
+              height: width * 0.6,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                border: Border.all(
+                  color: Colors.white.withOpacity(0.7),
+                  width: 2,
+                ),
+              ),
+            ),
+          ),
+
+          // Target cross
+          Center(
+            child: Container(
+              width: width * 0.6,
+              height: width * 0.6,
+              child: CustomPaint(
+                painter: CrosshairPainter(
+                  color: Colors.white.withOpacity(0.7),
+                ),
+              ),
+            ),
+          ),
+
+          // Overlay text for eye positioning
+          Positioned(
+            top: height * 0.15,
+            left: 0,
+            right: 0,
+            child: Text(
+              'Center your ${_selectedEyeSide.toUpperCase()} eye in the circle',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+                shadows: [
+                  Shadow(
+                    offset: Offset(0, 1),
+                    blurRadius: 3.0,
+                    color: Colors.black.withOpacity(0.5),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildControls() {
+    return Positioned(
+      bottom: 0,
+      left: 0,
+      right: 0,
+      child: Container(
+        padding: const EdgeInsets.only(bottom: 24),
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.bottomCenter,
+            end: Alignment.topCenter,
+            colors: [
+              Colors.black.withOpacity(0.7),
+              Colors.transparent,
+            ],
+            stops: const [0.5, 1.0],
+          ),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                _buildControlButton(
+                  icon: _isTorchOn ? Icons.flash_on : Icons.flash_off,
+                  label: _isTorchOn ? 'Flash On' : 'Flash Off',
+                  onPressed: _toggleTorch,
+                ),
+                _buildCaptureButton(),
+                _buildControlButton(
+                  icon: Icons.photo_library,
+                  label: 'Gallery',
+                  onPressed: _pickImageFromGallery,
+                ),
+              ],
+            ),
+            const SizedBox(height: 20),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                _buildControlChip(
+                  icon: Icons.remove_red_eye,
+                  label: '${_selectedEyeSide.toUpperCase()} EYE',
+                  onPressed: _toggleEyeSide,
+                ),
+                const SizedBox(width: 16),
+                _buildControlChip(
+                  icon: _showGuides ? Icons.grid_on : Icons.grid_off,
+                  label: _showGuides ? 'GUIDE ON' : 'GUIDE OFF',
+                  onPressed: _toggleGuidelines,
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildControlButton({
+    required IconData icon,
+    required String label,
+    required VoidCallback onPressed,
+  }) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        IconButton(
+          icon: Icon(icon, color: Colors.white, size: 28),
+          onPressed: onPressed,
+        ),
+        Text(
+          label,
+          style: const TextStyle(
+            color: Colors.white,
+            fontSize: 12,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildControlChip({
+    required IconData icon,
+    required String label,
+    required VoidCallback onPressed,
+  }) {
+    return InkWell(
+      onTap: onPressed,
+      borderRadius: BorderRadius.circular(30),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        decoration: BoxDecoration(
+          color: Colors.black.withOpacity(0.5),
+          borderRadius: BorderRadius.circular(30),
+          border: Border.all(
+            color: Colors.white.withOpacity(0.3),
+            width: 1,
+          ),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(icon, color: Colors.white, size: 16),
+            const SizedBox(width: 8),
+            Text(
+              label,
+              style: const TextStyle(
+                color: Colors.white,
+                fontSize: 12,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildCaptureButton() {
+    return GestureDetector(
+      onTap: _isCapturing ? null : _captureImage,
+      child: Container(
+        height: 80,
+        width: 80,
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          color: Colors.white.withOpacity(0.2),
+          border: Border.all(
+            color: Colors.white,
+            width: 3,
+          ),
+        ),
+        child: Center(
+          child: Container(
+            height: 60,
+            width: 60,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: _isCapturing ? Colors.grey : Colors.white,
+            ),
+            child: _isCapturing
+                ? const Center(
+                    child: SizedBox(
+                      width: 24,
+                      height: 24,
+                      child: CircularProgressIndicator(
+                        valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                        strokeWidth: 3,
+                      ),
+                    ),
+                  )
+                : null,
+          ),
+        ),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.black,
+      body: Stack(
+        children: [
+          // Error or loading state
+          if (_errorMessage != null || !_isInitialized)
+            Center(
+              child: Container(
+                padding: const EdgeInsets.all(24),
+                decoration: BoxDecoration(
+                  color: Colors.black.withOpacity(0.8),
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(
+                      _errorMessage != null ? Icons.error : Icons.camera,
+                      color: _errorMessage != null ? Colors.red : Colors.white,
+                      size: 48,
+                    ),
+                    const SizedBox(height: 16),
+                    Text(
+                      _errorMessage ?? 'Initializing camera...',
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 16,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                    if (_errorMessage != null) ...[
+                      const SizedBox(height: 24),
+                      ElevatedButton(
+                        onPressed: _initializeCamera,
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.blueAccent,
+                          foregroundColor: Colors.white,
+                        ),
+                        child: const Text('Retry'),
+                      ),
+                    ],
+                  ],
+                ),
+              ),
+            )
+          else
+            // Camera preview
+            Positioned.fill(
+              child: CameraPreview(_controller!),
+            ),
+
+          // Back button
+          Positioned(
+            top: MediaQuery.of(context).padding.top + 8,
+            left: 16,
+            child: Container(
+              decoration: BoxDecoration(
+                color: Colors.black.withOpacity(0.5),
+                shape: BoxShape.circle,
+              ),
+              child: IconButton(
+                icon: const Icon(Icons.arrow_back, color: Colors.white),
+                onPressed: () => Navigator.of(context).pop(),
+              ),
+            ),
+          ),
+
+          // Eye side indicator
+          Positioned(
+            top: MediaQuery.of(context).padding.top + 8,
+            left: 0,
+            right: 0,
+            child: Center(
+              child: Container(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+                decoration: BoxDecoration(
+                  color: Colors.blueAccent,
+                  borderRadius: BorderRadius.circular(30),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.3),
+                      blurRadius: 8,
+                      offset: const Offset(0, 2),
+                    ),
+                  ],
+                ),
+                child: Text(
+                  'Scanning ${_selectedEyeSide.toUpperCase()} Eye',
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
+                  ),
+                ),
+              ),
+            ),
+          ),
+
+          if (_isInitialized) ...[
+            // Positioning guides
+            _buildCameraOverlay(),
+
+            // Zoom control panel
+            _buildZoomControl(),
+
+            // Camera controls at bottom
+            _buildControls(),
+          ],
+        ],
+      ),
+    );
+  }
+}
+
+class CrosshairPainter extends CustomPainter {
+  final Color color;
+
+  CrosshairPainter({required this.color});
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()
+      ..color = color
+      ..strokeWidth = 1.5
+      ..style = PaintingStyle.stroke;
+
+    final center = Offset(size.width / 2, size.height / 2);
+
+    // Draw crosshair
+    canvas.drawLine(
+      Offset(center.dx - 10, center.dy),
+      Offset(center.dx + 10, center.dy),
+      paint,
+    );
+
+    canvas.drawLine(
+      Offset(center.dx, center.dy - 10),
+      Offset(center.dx, center.dy + 10),
+      paint,
+    );
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) {
+    return false;
+  }
+}

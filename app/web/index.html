@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <base href="$FLUTTER_BASE_HREF">
+
+  <meta charset="UTF-8">
+  <meta content="IE=Edge" http-equiv="X-UA-Compatible">
+  <meta name="description" content="An eye disease detection application.">
+
+  <!-- iOS meta tags & icons -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="apple-mobile-web-app-title" content="IRIS">
+  <link rel="apple-touch-icon" href="icons/Icon-192.png">
+
+  <title>IRIS</title>
+  <link rel="manifest" href="manifest.json">
+
+  <script>
+    // The value below is injected by flutter build, do not touch.
+    var serviceWorkerVersion = null;
+  </script>
+
+  <!-- WebGL support -->
+  <script>
+    window.addEventListener('load', function(ev) {
+      try {
+        // Enable WebGL2 context for better shader support
+        const canvas = document.createElement('canvas');
+        const gl = canvas.getContext('webgl2') || canvas.getContext('webgl');
+        if (!gl) {
+          console.warn('WebGL not available - some visual effects may be limited');
+        }
+      } catch (e) {
+        console.warn('WebGL initialization error:', e);
+      }
+      
+      // Load Flutter web
+      _flutter.loader.loadEntrypoint({
+        serviceWorker: {
+          serviceWorkerVersion: serviceWorkerVersion,
+        },
+        onEntrypointLoaded: async function(engineInitializer) {
+          // Initialize engine with WebGL support and file handling
+          const appRunner = await engineInitializer.initializeEngine({
+            renderer: 'html', // Use HTML renderer for better file handling
+            canvasKitBaseUrl: "/canvaskit/",
+          });
+          await appRunner.runApp();
+        }
+      });
+    });
+  </script>
+
+  <style>
+    /* Add loading indicator styles */
+    .loading {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin: 0;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      -ms-transform: translate(-50%, -50%);
+      transform: translate(-50%, -50%);
+    }
+    
+    .loading.indicator {
+      width: 50px;
+      height: 50px;
+      border: 3px solid #f3f3f3;
+      border-radius: 50%;
+      border-top: 3px solid #3498db;
+      -webkit-animation: spin 1s linear infinite;
+      animation: spin 1s linear infinite;
+    }
+    
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+  </style>
+</head>
+<body>
+  <div class="loading">
+    <div class="loading indicator"></div>
+  </div>
+  <script src="flutter.js" defer></script>
+</body>
+</html>
