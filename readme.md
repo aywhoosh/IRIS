@@ -42,7 +42,7 @@ An end-to-end, **AI-powered** Flutter app for **few-shot ocular disease** screen
 | Stack      | Min Version | Notes                   |
 | ---------- | ----------- | ----------------------- |
 | Flutter    | 3.0+        | with Android/iOS tool-chain |
-| Dart       | 2.17+       |                         |
+| Dart       | 2.17+       | Preinstalled with Flutter SDK|
 | Node.js & npm | 16+      | for utilities / Supabase functions |
 | Python     | 3.8+        | FastAPI back-end        |
 | AWS CLI    | —           | configured for EC2/Lambda |
