@@ -17,13 +17,14 @@ An end-to-end, **AI-powered** Flutter app for **few-shot ocular disease** screen
    - [Installation](#installation)  
    - [Environment Variables](#environment-variables)  
 3. [🏗️ Project Structure](#️-project-structure)  
-4. [📐 Architecture Overview](#️-architecture-overview)  
-5. [💾 Database Schema](#-database-schema)  
-6. [📡 API Endpoints](#-api-endpoints)  
-7. [📸 Screenshots](#-screenshots)  
-8. [⚙️ Deployment](#️-deployment)  
-9. [🤝 Contributing](#-contributing)  
-10. [📄 License](#-license)
+4. [📐 Architecture Overview](#️-architecture-overview)
+5. [🎥 Demo](#-demo)  
+6. [💾 Database Schema](#-database-schema)  
+7. [📡 API Endpoints](#-api-endpoints)  
+8. [📸 Screenshots](#-screenshots)  
+9. [⚙️ Deployment](#️-deployment)
+10. [🤝 Contributing](#-contributing)  
+11. [📄 License](#-license)
 
 ---
 
@@ -88,8 +89,6 @@ API_PORT=8000
 MODEL_API_URL=https://ec2-your-ip.compute.amazonaws.com/predict
 ```
 
-
-
 ---
 
 ## 🏗️ Project Structure
@@ -122,6 +121,21 @@ flowchart LR
   E -->|JSON result| A
   C --> A
 ```
+## 🎥 Demo
+
+Watch IRIS in action—capture, upload, and get real-time ocular diagnostics:
+<p align="center">
+  <video 
+    src="https://github.com/user-attachments/assets/b023e402-2fe0-41b4-b9e2-6f7e51b4c552" 
+    controls 
+    autoplay 
+    loop 
+    muted 
+    width="600">
+    Your browser does not support the video tag.
+  </video>
+</p>
+
 
 ## 💾 Database Schema
 ```mermaid
@@ -208,7 +222,8 @@ erDiagram
       flutter run --release
 
      ```
-     
+
+
 ## 🤝 Contributing
 1. Fork this repository  
 2. Create your feature branch (`git checkout -b feature/xyz`)  
