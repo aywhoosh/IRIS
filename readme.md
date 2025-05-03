@@ -11,14 +11,14 @@ An end-to-end, **AI-powered** Flutter app for **few-shot ocular disease** screen
 
 ## 📋 Table of Contents
 
-1. [✨ Key Features](#-key-features)  
-2. [🚀 Getting Started](#-getting-started)  
+1. [✨ Key Features](#-key-features)
+2. [🎥 Demo](#-demo)  
+3. [🚀 Getting Started](#-getting-started)  
    - [Prerequisites](#prerequisites)  
    - [Installation](#installation)  
    - [Environment Variables](#environment-variables)  
-3. [🏗️ Project Structure](#️-project-structure)  
-4. [📐 Architecture Overview](#️-architecture-overview)
-5. [🎥 Demo](#-demo)  
+4. [🏗️ Project Structure](#️-project-structure)  
+5. [📐 Architecture Overview](#️-architecture-overview)
 6. [💾 Database Schema](#-database-schema)  
 7. [📡 API Endpoints](#-api-endpoints)  
 8. [📸 Screenshots](#-screenshots)  
@@ -35,7 +35,26 @@ An end-to-end, **AI-powered** Flutter app for **few-shot ocular disease** screen
 - 📊 **Rich Results** – condition, confidence, severity & recommendations, plus scan history  
 - 🎨 **Animated UI** – shader backgrounds, pulsating orbs, smooth page transitions  
 
+## 🎥 Demo
+
+Watch IRIS in action—capture, upload, and get real-time ocular diagnostics:
+<p align="center">
+  <video 
+    src="https://github.com/user-attachments/assets/b023e402-2fe0-41b4-b9e2-6f7e51b4c552" 
+    controls 
+    autoplay 
+    loop 
+    muted 
+    width="600">
+    Your browser does not support the video tag.
+  </video>
+</p>
+
+
 ---
+
+
+
 
 ## 🚀 Getting Started
 
@@ -121,20 +140,7 @@ flowchart LR
   E -->|JSON result| A
   C --> A
 ```
-## 🎥 Demo
 
-Watch IRIS in action—capture, upload, and get real-time ocular diagnostics:
-<p align="center">
-  <video 
-    src="https://github.com/user-attachments/assets/b023e402-2fe0-41b4-b9e2-6f7e51b4c552" 
-    controls 
-    autoplay 
-    loop 
-    muted 
-    width="600">
-    Your browser does not support the video tag.
-  </video>
-</p>
 
 
 ## 💾 Database Schema
