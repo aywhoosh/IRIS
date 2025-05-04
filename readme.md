@@ -40,7 +40,7 @@ An end-to-end, **AI-powered** Flutter app for **few-shot ocular disease** screen
 Watch IRIS in action—capture, upload, and get real-time ocular diagnostics:
 <p align="center">
   <video 
-    src="https://github.com/aywhoosh/IRIS/blob/main/screenshots/App%20Flow%20-%20IRIS.mp4" 
+    src="https://github.com/aywhoosh/IRIS/blob/main/screenshots/App%20Demo%20-%20IRIS.mp4" 
     controls 
     autoplay 
     loop 
