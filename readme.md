@@ -44,7 +44,7 @@ Watch IRIS in action—capture, upload, and get real-time ocular diagnostics:
 
 <p align="center">
   <video
-    src="https://raw.githubusercontent.com/aywhoosh/IRIS/main/screenshots/App%20Demo%20-%20IRIS.mp4"
+    src="https://github.com/user-attachments/assets/48f37aaf-4333-45fc-9a1e-fccadf37b5d0"
     controls
     autoplay
     loop
@@ -53,6 +53,10 @@ Watch IRIS in action—capture, upload, and get real-time ocular diagnostics:
     Your browser does not support the video tag.
   </video>
 </p>
+
+
+
+
 
 
 
